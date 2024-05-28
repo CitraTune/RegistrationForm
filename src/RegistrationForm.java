@@ -19,7 +19,7 @@ public class RegistrationForm extends JFrame {
     public RegistrationForm() {
         users = new ArrayList<>();
 
-        setTitle("User Registration Form");
+        setTitle("Class Signup");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -30,19 +30,19 @@ public class RegistrationForm extends JFrame {
         JLabel emailLabel = new JLabel("Email:");
         emailField = new JTextField(20);
 
-        JLabel mathLabel = new JLabel("Math Class:");
+        JLabel mathLabel = new JLabel("Current Math Class:");
         mathBox = new JComboBox<>(new String[]{"Algebra I", "Geometry", "Algebra II", "Statistics", "Pre-Calculus", "Calculus"});
 
-        JLabel englishLabel = new JLabel("English Class:");
+        JLabel englishLabel = new JLabel("Current English Class:");
         englishBox = new JComboBox<>(new String[]{"English I", "English II", "English III", "Language & Composition", "English IV", "Literature & Composition"});
 
-        JLabel scienceLabel = new JLabel("Science Class:");
+        JLabel scienceLabel = new JLabel("Current Science Class:");
         scienceBox = new JComboBox<>(new String[]{"Biology", "Chemistry", "Physics", "Environmental Science"});
 
-        JLabel historyLabel = new JLabel("History Class:");
+        JLabel historyLabel = new JLabel("Current History Class:");
         historyBox = new JComboBox<>(new String[]{"World History", "US History", "European History", "Government"});
 
-        JLabel foreignLanguageLabel = new JLabel("Foreign Language Class:");
+        JLabel foreignLanguageLabel = new JLabel("Current Foreign Language Class:");
         foreignLanguageBox = new JComboBox<>(new String[]{"Spanish I", "Spanish II", "French I", "French II", "German I", "German II"});
 
         JButton registerButton = new JButton("Register");
