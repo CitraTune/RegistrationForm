@@ -178,7 +178,6 @@ public class RegistrationForm extends JFrame {
                 "Science Class: " + scienceClass + " -> " + getFutureClasses(scienceClass) + "\n" +
                 "History Class: " + historyClass + " -> " + getFutureClasses(historyClass) + "\n" +
                 "Foreign Language Class: " + foreignLanguageClass + " -> " + getFutureClasses(foreignLanguageClass) + "\n";
-
         recentUserArea.setText(recentUserInfo);
     }
     private String getFutureClasses(String currentClass) {
