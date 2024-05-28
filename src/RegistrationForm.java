@@ -1,252 +1,208 @@
 import javax.swing.*;
-import java.awt.event.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-class User {
-    private String name;
-    private String email;
-    private String mathClass;
-    private String englishClass;
-    private String scienceClass;
-    private String historyClass;
-    private String foreignLanguageClass;
 
-    public User(String name, String email, String mathClass, String englishClass, String scienceClass, String historyClass, String foreignLanguageClass) {
-        this.name = name;
-        this.email = email;
-        this.mathClass = mathClass;
-        this.englishClass = englishClass;
-        this.scienceClass = scienceClass;
-        this.historyClass = historyClass;
-        this.foreignLanguageClass = foreignLanguageClass;
-    }
-
-    // Getters
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public String getMathClass() { return mathClass; }
-    public String getEnglishClass() { return englishClass; }
-    public String getScienceClass() { return scienceClass; }
-    public String getHistoryClass() { return historyClass; }
-    public String getForeignLanguageClass() { return foreignLanguageClass; }
-
-    @Override
-    public String toString() {
-        return "User{name='" + name + "', email='" + email + "', mathClass='" + mathClass + "', englishClass='" + englishClass + "', scienceClass='" + scienceClass + "', historyClass='" + historyClass + "', foreignLanguageClass='" + foreignLanguageClass + "'}";
-    }
-}
 
 public class RegistrationForm extends JFrame {
-    private JLabel nameLabel, emailLabel, mathLabel, englishLabel, scienceLabel, historyLabel, foreignLanguageLabel;
-    private JTextField nameField, emailField;
-    private JComboBox<String> mathBox, englishBox, scienceBox, historyBox, foreignLanguageBox;
-    private JButton registerButton, loadButton;
-    private List<User> users;
+    private final JTextField nameField;
+    private final JTextField emailField;
+    private final JComboBox<String> mathBox;
+    private final JComboBox<String> englishBox;
+    private final JComboBox<String> scienceBox;
+    private final JComboBox<String> historyBox;
+    private final JComboBox<String> foreignLanguageBox;
+    private final List<User> users;
 
     public RegistrationForm() {
-        // Initialize the user list
+        //This arraylist holds all the user objects, which hold strings.
         users = new ArrayList<>();
 
-        // Set up the frame
+        //Formatting
         setTitle("User Registration Form");
-        setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Create components
-        nameLabel = new JLabel("Name:");
+        JLabel nameLabel = new JLabel("Name:");
         nameField = new JTextField(20);
 
-        emailLabel = new JLabel("Email:");
+        JLabel emailLabel = new JLabel("Email:");
         emailField = new JTextField(20);
 
-        mathLabel = new JLabel("Math Class:");
-        mathBox = new JComboBox<>(new String[]{"Algebra I", "Geometry", "Algebra II", "Pre-Calculus", "Calculus"});
+        JLabel mathLabel = new JLabel("Math Class:");
+        mathBox = new JComboBox<>(new String[]{"Algebra I", "Geometry", "Algebra II", "Statistics", "Pre-Calculus", "Calculus"});
 
-        englishLabel = new JLabel("English Class:");
-        englishBox = new JComboBox<>(new String[]{"English I", "English II", "English III", "English IV"});
+        JLabel englishLabel = new JLabel("English Class:");
+        englishBox = new JComboBox<>(new String[]{"English I", "English II", "English III", "Language & Composition","English IV", "Literature & Composition"});
 
-        scienceLabel = new JLabel("Science Class:");
+        JLabel scienceLabel = new JLabel("Science Class:");
         scienceBox = new JComboBox<>(new String[]{"Biology", "Chemistry", "Physics", "Environmental Science"});
 
-        historyLabel = new JLabel("History Class:");
+        JLabel historyLabel = new JLabel("History Class:");
         historyBox = new JComboBox<>(new String[]{"World History", "US History", "European History", "Government"});
 
-        foreignLanguageLabel = new JLabel("Foreign Language Class:");
+        JLabel foreignLanguageLabel = new JLabel("Foreign Language Class:");
         foreignLanguageBox = new JComboBox<>(new String[]{"Spanish I", "Spanish II", "French I", "French II", "German I", "German II"});
 
-        registerButton = new JButton("Register");
-        loadButton = new JButton("Load Users");
+        JButton registerButton = new JButton("Register");
+        JButton loadButton = new JButton("Load Users");
 
-        // Add action listener to the register button
-        registerButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Get user input
-                String name = nameField.getText();
-                String email = emailField.getText();
-                String mathClass = (String) mathBox.getSelectedItem();
-                String englishClass = (String) englishBox.getSelectedItem();
-                String scienceClass = (String) scienceBox.getSelectedItem();
-                String historyClass = (String) historyBox.getSelectedItem();
-                String foreignLanguageClass = (String) foreignLanguageBox.getSelectedItem();
 
-                // Perform registration
+        registerButton.addActionListener(e -> {
+
+            String name = nameField.getText();
+            String email = emailField.getText();
+            String mathClass = (String) mathBox.getSelectedItem();
+            String englishClass = (String) englishBox.getSelectedItem();
+            String scienceClass = (String) scienceBox.getSelectedItem();
+            String historyClass = (String) historyBox.getSelectedItem();
+            String foreignLanguageClass = (String) foreignLanguageBox.getSelectedItem();
+
+            try {
                 registerUser(name, email, mathClass, englishClass, scienceClass, historyClass, foreignLanguageClass);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
-        // Add action listener to the load button
-        loadButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Load users from the CSV file
+        loadButton.addActionListener(e -> {
+            try {
                 loadUsers();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
-        // Set layout
-        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-
-        // Add components to the frame
-        add(nameLabel);
-        add(nameField);
-        add(emailLabel);
-        add(emailField);
-        add(mathLabel);
-        add(mathBox);
-        add(englishLabel);
-        add(englishBox);
-        add(scienceLabel);
-        add(scienceBox);
-        add(historyLabel);
-        add(historyBox);
-        add(foreignLanguageLabel);
-        add(foreignLanguageBox);
-        add(Box.createVerticalStrut(10)); // Add space
-        add(registerButton);
-        add(loadButton);
-
-        // Set visibility
+        //Formatting nonsense.
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        //Gaps between objects
+        gbc.insets = new Insets(10, 20, 10, 20);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(nameLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(nameField, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(emailLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(emailField, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(mathLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(mathBox, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(englishLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(englishBox, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        panel.add(scienceLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(scienceBox, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        panel.add(historyLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(historyBox, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        panel.add(foreignLanguageLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(foreignLanguageBox, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        panel.add(registerButton, gbc);
+        gbc.gridx = 1;
+        panel.add(loadButton, gbc);
+        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        add(panel, BorderLayout.CENTER);
         setVisible(true);
+        //WEIRDLY CRUCIAL TO MAKING EVERYTHING WORK
+        pack();
     }
 
-    private void registerUser(String name, String email, String mathClass, String englishClass, String scienceClass, String historyClass, String foreignLanguageClass) {
-        try {
-            // Open file in append mode
-            BufferedWriter writer = new BufferedWriter(new FileWriter("users.csv", true));
-
-            // Write user data to file
-            writer.write(name + "," + email + "," + mathClass + "," + englishClass + "," + scienceClass + "," + historyClass + "," + foreignLanguageClass);
-            writer.newLine();
-
-            // Close file
-            writer.close();
-
-            // Notify user of successful registration
-            JOptionPane.showMessageDialog(this, "User registered successfully!");
-        } catch (IOException ex) {
-            // Handle file IO exception
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error registering user!");
-        }
+    //Uses BufferedWriter object named writer to put all this stuff in a csv
+    private void registerUser(String name, String email, String mathClass, String englishClass, String scienceClass, String historyClass, String foreignLanguageClass) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("users.csv", true));
+        writer.write(name + "," + email + "," + mathClass + "," + englishClass + "," + scienceClass + "," + historyClass + "," + foreignLanguageClass);
+        writer.newLine();
+        writer.close();
+        JOptionPane.showMessageDialog(this, "User registered successfully!");
     }
 
-    private void loadUsers() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("users.csv"));
-            String line;
-            users.clear(); // Clear the existing list
-
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length == 7) {
-                    User user = new User(data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
-                    users.add(user);
-                }
+    //Read from the csv written to in the above method
+    private void loadUsers() throws IOException {
+        //Converting the CSV into conveniently usable data
+        BufferedReader reader = new BufferedReader(new FileReader("users.csv"));
+        String line;
+        users.clear();
+        while ((line = reader.readLine()) != null) {
+            String[] data = line.split(",");
+            if (data.length == 7) {
+                User user = new User(data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+                users.add(user);
             }
-
-            reader.close();
-
-            // Display the loaded users and their possible future classes
-            StringBuilder userList = new StringBuilder("Loaded Users and Possible Future Classes:\n");
-            for (User user : users) {
-                userList.append(user).append("\n")
-                        .append("Possible Future Math Classes: ").append(getFutureClasses(user.getMathClass())).append("\n")
-                        .append("Possible Future English Classes: ").append(getFutureClasses(user.getEnglishClass())).append("\n")
-                        .append("Possible Future Science Classes: ").append(getFutureClasses(user.getScienceClass())).append("\n")
-                        .append("Possible Future History Classes: ").append(getFutureClasses(user.getHistoryClass())).append("\n")
-                        .append("Possible Future Foreign Language Classes: ").append(getFutureClasses(user.getForeignLanguageClass())).append("\n\n");
-            }
-            JOptionPane.showMessageDialog(this, userList.toString());
-        } catch (IOException ex) {
-            // Handle file IO exception
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error loading users!");
         }
-    }
+        reader.close();
 
+        //Formatting to READABLE ENGLISH!!! (It's HTML)
+        StringBuilder userList = new StringBuilder("<html><body><h1>Loaded Users and Possible Future Classes</h1>");
+        for (User user : users) {
+            userList.append("<p><strong>Name:</strong> ").append(user.getName()).append("<br>")
+                    .append("<strong>Email:</strong> ").append(user.getEmail()).append("<br>")
+                    .append("<strong>Math Class:</strong> ").append(user.getMathClass()).append(" -> ").append(getFutureClasses(user.getMathClass())).append("<br>")
+                    .append("<strong>English Class:</strong> ").append(user.getEnglishClass()).append(" -> ").append(getFutureClasses(user.getEnglishClass())).append("<br>")
+                    .append("<strong>Science Class:</strong> ").append(user.getScienceClass()).append(" -> ").append(getFutureClasses(user.getScienceClass())).append("<br>")
+                    .append("<strong>History Class:</strong> ").append(user.getHistoryClass()).append(" -> ").append(getFutureClasses(user.getHistoryClass())).append("<br>")
+                    .append("<strong>Foreign Language Class:</strong> ").append(user.getForeignLanguageClass()).append(" -> ").append(getFutureClasses(user.getForeignLanguageClass())).append("<br></p><hr>");
+        }
+        userList.append("</body></html>");
+        JOptionPane.showMessageDialog(this, userList.toString(), "Loaded Users", JOptionPane.INFORMATION_MESSAGE);
+
+
+    }
+    //Basically an extension of the above method.
     private String getFutureClasses(String currentClass) {
-        // Define class progression
-        switch (currentClass) {
-            case "Algebra I":
-                return "Geometry, Algebra II";
-            case "Geometry":
-                return "Algebra II, Pre-Calculus";
-            case "Algebra II":
-                return "Pre-Calculus, Calculus";
-            case "Pre-Calculus":
-                return "Calculus";
-            case "Calculus":
-                return "Advanced Mathematics";
-
-            case "English I":
-                return "English II";
-            case "English II":
-                return "English III";
-            case "English III":
-                return "English IV";
-            case "English IV":
-                return "Advanced Literature";
-
-            case "Biology":
-                return "Chemistry, Environmental Science";
-            case "Chemistry":
-                return "Physics, Advanced Chemistry";
-            case "Physics":
-                return "Advanced Physics";
-            case "Environmental Science":
-                return "Advanced Environmental Studies";
-
-            case "World History":
-                return "US History, European History";
-            case "US History":
-                return "Government, Advanced US History";
-            case "European History":
-                return "Advanced European Studies";
-            case "Government":
-                return "Political Science";
-
-            case "Spanish I":
-                return "Spanish II";
-            case "Spanish II":
-                return "Advanced Spanish";
-            case "French I":
-                return "French II";
-            case "French II":
-                return "Advanced French";
-            case "German I":
-                return "German II";
-            case "German II":
-                return "Advanced German";
-
-            default:
-                return "No further classes available";
-        }
+        //The outputs that appear in the "Load users", done with switches. I could've done a ranking system and assigned integers to classes, but I chose not to.
+        return switch (currentClass) {
+            case "Algebra I" -> "Geometry";
+            case "Geometry" -> "Algebra II";
+            case "Algebra II" -> "Pre-Calculus, Statistics";
+            case "Pre-Calculus" -> "Calculus, Statistics";
+            case "Calculus" -> "Statistics";
+            case "English I" -> "English II";
+            case "English II" -> "English III, Language & Composition";
+            case "English III" -> "English IV, Literature & Composition";
+            case "Literature & Composition" -> "";
+            case "English IV" -> "Advanced Literature";
+            case "Biology" -> "Chemistry, Environmental Science";
+            case "Chemistry" -> "Physics, Advanced Chemistry";
+            case "Physics" -> "Advanced Physics";
+            case "Environmental Science" -> "Advanced Environmental Studies";
+            case "World History" -> "US History, European History";
+            case "US History" -> "Government, Advanced US History";
+            case "European History" -> "Advanced European Studies";
+            case "Government" -> "Political Science";
+            case "Spanish I" -> "Spanish II";
+            case "Spanish II" -> "Advanced Spanish";
+            case "French I" -> "French II";
+            case "French II" -> "Advanced French";
+            case "German I" -> "German II";
+            case "German II" -> "Advanced German";
+            default -> "No further classes available";
+        };
     }
 
     public static void main(String[] args) {
-
-        SwingUtilities.invokeLater(() -> new RegistrationForm());
+        SwingUtilities.invokeLater(RegistrationForm::new);
     }
 }
