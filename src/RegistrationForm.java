@@ -5,8 +5,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class RegistrationForm extends JFrame {
     private final JTextField nameField;
     private final JTextField emailField;
@@ -15,14 +13,14 @@ public class RegistrationForm extends JFrame {
     private final JComboBox<String> scienceBox;
     private final JComboBox<String> historyBox;
     private final JComboBox<String> foreignLanguageBox;
+    private final JTextArea recentUserArea;
     private final List<User> users;
 
     public RegistrationForm() {
-        //This arraylist holds all the user objects, which hold strings.
         users = new ArrayList<>();
 
-        //Formatting
         setTitle("User Registration Form");
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -36,7 +34,7 @@ public class RegistrationForm extends JFrame {
         mathBox = new JComboBox<>(new String[]{"Algebra I", "Geometry", "Algebra II", "Statistics", "Pre-Calculus", "Calculus"});
 
         JLabel englishLabel = new JLabel("English Class:");
-        englishBox = new JComboBox<>(new String[]{"English I", "English II", "English III", "Language & Composition","English IV", "Literature & Composition"});
+        englishBox = new JComboBox<>(new String[]{"English I", "English II", "English III", "Language & Composition", "English IV", "Literature & Composition"});
 
         JLabel scienceLabel = new JLabel("Science Class:");
         scienceBox = new JComboBox<>(new String[]{"Biology", "Chemistry", "Physics", "Environmental Science"});
@@ -50,9 +48,13 @@ public class RegistrationForm extends JFrame {
         JButton registerButton = new JButton("Register");
         JButton loadButton = new JButton("Load Users");
 
+        recentUserArea = new JTextArea(10, 30);
+        recentUserArea.setEditable(false);
+        recentUserArea.setLineWrap(true);
+        recentUserArea.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(recentUserArea);
 
         registerButton.addActionListener(e -> {
-
             String name = nameField.getText();
             String email = emailField.getText();
             String mathClass = (String) mathBox.getSelectedItem();
@@ -63,6 +65,7 @@ public class RegistrationForm extends JFrame {
 
             try {
                 registerUser(name, email, mathClass, englishClass, scienceClass, historyClass, foreignLanguageClass);
+                updateRecentUserArea(name, email, mathClass, englishClass, scienceClass, historyClass, foreignLanguageClass);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -76,11 +79,9 @@ public class RegistrationForm extends JFrame {
             }
         });
 
-        //Formatting nonsense.
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        //Gaps between objects
         gbc.insets = new Insets(10, 20, 10, 20);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
@@ -123,14 +124,17 @@ public class RegistrationForm extends JFrame {
         panel.add(registerButton, gbc);
         gbc.gridx = 1;
         panel.add(loadButton, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.gridwidth = 2;
+        panel.add(scrollPane, gbc);
+
         panel.setBorder(new EmptyBorder(20, 20, 20, 20));
         add(panel, BorderLayout.CENTER);
         setVisible(true);
-        //WEIRDLY CRUCIAL TO MAKING EVERYTHING WORK
         pack();
     }
 
-    //Uses BufferedWriter object named writer to put all this stuff in a csv
     private void registerUser(String name, String email, String mathClass, String englishClass, String scienceClass, String historyClass, String foreignLanguageClass) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter("users.csv", true));
         writer.write(name + "," + email + "," + mathClass + "," + englishClass + "," + scienceClass + "," + historyClass + "," + foreignLanguageClass);
@@ -139,9 +143,7 @@ public class RegistrationForm extends JFrame {
         JOptionPane.showMessageDialog(this, "User registered successfully!");
     }
 
-    //Read from the csv written to in the above method
     private void loadUsers() throws IOException {
-        //Converting the CSV into conveniently usable data
         BufferedReader reader = new BufferedReader(new FileReader("users.csv"));
         String line;
         users.clear();
@@ -154,7 +156,6 @@ public class RegistrationForm extends JFrame {
         }
         reader.close();
 
-        //Formatting to READABLE ENGLISH!!! (It's HTML)
         StringBuilder userList = new StringBuilder("<html><body><h1>Loaded Users and Possible Future Classes</h1>");
         for (User user : users) {
             userList.append("<p><strong>Name:</strong> ").append(user.getName()).append("<br>")
@@ -167,12 +168,22 @@ public class RegistrationForm extends JFrame {
         }
         userList.append("</body></html>");
         JOptionPane.showMessageDialog(this, userList.toString(), "Loaded Users", JOptionPane.INFORMATION_MESSAGE);
-
-
     }
-    //Basically an extension of the above method.
+
+    private void updateRecentUserArea(String name, String email, String mathClass, String englishClass, String scienceClass, String historyClass, String foreignLanguageClass) {
+        StringBuilder recentUserInfo = new StringBuilder();
+        recentUserInfo.append("Name: ").append(name).append("\n")
+                .append("Email: ").append(email).append("\n")
+                .append("Math Class: ").append(mathClass).append(" -> ").append(getFutureClasses(mathClass)).append("\n")
+                .append("English Class: ").append(englishClass).append(" -> ").append(getFutureClasses(englishClass)).append("\n")
+                .append("Science Class: ").append(scienceClass).append(" -> ").append(getFutureClasses(scienceClass)).append("\n")
+                .append("History Class: ").append(historyClass).append(" -> ").append(getFutureClasses(historyClass)).append("\n")
+                .append("Foreign Language Class: ").append(foreignLanguageClass).append(" -> ").append(getFutureClasses(foreignLanguageClass)).append("\n");
+
+        recentUserArea.setText(recentUserInfo.toString());
+    }
+
     private String getFutureClasses(String currentClass) {
-        //The outputs that appear in the "Load users", done with switches. I could've done a ranking system and assigned integers to classes, but I chose not to.
         return switch (currentClass) {
             case "Algebra I" -> "Geometry";
             case "Geometry" -> "Algebra II";
@@ -181,9 +192,8 @@ public class RegistrationForm extends JFrame {
             case "Calculus" -> "Statistics";
             case "English I" -> "English II";
             case "English II" -> "English III, Language & Composition";
-            case "English III" -> "English IV, Literature & Composition";
-            case "Literature & Composition" -> "";
-            case "English IV" -> "Advanced Literature";
+            case "English III", "Language & Composition" -> "English IV, Literature & Composition";
+            case "Literature & Composition", "English IV" -> "Advanced Literature";
             case "Biology" -> "Chemistry, Environmental Science";
             case "Chemistry" -> "Physics, Advanced Chemistry";
             case "Physics" -> "Advanced Physics";
@@ -206,3 +216,4 @@ public class RegistrationForm extends JFrame {
         SwingUtilities.invokeLater(RegistrationForm::new);
     }
 }
+
