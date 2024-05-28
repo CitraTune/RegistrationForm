@@ -171,18 +171,16 @@ public class RegistrationForm extends JFrame {
     }
 
     private void updateRecentUserArea(String name, String email, String mathClass, String englishClass, String scienceClass, String historyClass, String foreignLanguageClass) {
-        StringBuilder recentUserInfo = new StringBuilder();
-        recentUserInfo.append("Name: ").append(name).append("\n")
-                .append("Email: ").append(email).append("\n")
-                .append("Math Class: ").append(mathClass).append(" -> ").append(getFutureClasses(mathClass)).append("\n")
-                .append("English Class: ").append(englishClass).append(" -> ").append(getFutureClasses(englishClass)).append("\n")
-                .append("Science Class: ").append(scienceClass).append(" -> ").append(getFutureClasses(scienceClass)).append("\n")
-                .append("History Class: ").append(historyClass).append(" -> ").append(getFutureClasses(historyClass)).append("\n")
-                .append("Foreign Language Class: ").append(foreignLanguageClass).append(" -> ").append(getFutureClasses(foreignLanguageClass)).append("\n");
+        String recentUserInfo = "Name: " + name + "\n" +
+                "Email: " + email + "\n" +
+                "Math Class: " + mathClass + " -> " + getFutureClasses(mathClass) + "\n" +
+                "English Class: " + englishClass + " -> " + getFutureClasses(englishClass) + "\n" +
+                "Science Class: " + scienceClass + " -> " + getFutureClasses(scienceClass) + "\n" +
+                "History Class: " + historyClass + " -> " + getFutureClasses(historyClass) + "\n" +
+                "Foreign Language Class: " + foreignLanguageClass + " -> " + getFutureClasses(foreignLanguageClass) + "\n";
 
-        recentUserArea.setText(recentUserInfo.toString());
+        recentUserArea.setText(recentUserInfo);
     }
-
     private String getFutureClasses(String currentClass) {
         return switch (currentClass) {
             case "Algebra I" -> "Geometry";
